@@ -1,0 +1,11 @@
+# Folders
+.pytest_cache
+.vscode
+__pycache__
+lib
+Old
+
+# Files
+Pipfile.lock
+debug.log
+skip.log
