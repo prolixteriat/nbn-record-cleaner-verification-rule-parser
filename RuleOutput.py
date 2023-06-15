@@ -8,10 +8,7 @@ Version: 2 (14-Jun-2023)
 
 import csv
 import logging
-import pandas as pd
 import os
-
-from RuleParser import RuleParser
 
 # ------------------------------------------------------------------------------
 
@@ -153,22 +150,6 @@ class RuleOutput:
              'information', 'difficulty_key', 'start_date', 'end_date', 
              'stage', '10km_GB', '10km_Ireland', '10km_CI'])
         
-    # ----------------------------------------------------------------------
-    # Write the consol dict to  CSV file
-
-    def write_consol(self, fn_txt):
-        '''
-        Params: fn_txt (string) - name of file to write
-        Return: N/A
-        '''        
-        fn = os.path.join(self.folder_output, fn_txt)
-        log.debug(f'Writing file: {fn}')
-        df = pd.DataFrame(self.consol)
-        dft = df.transpose()
-        dft.index.name = 'taxon_key'
-        dft.to_csv(fn, encoding='utf-8', 
-                    quoting=csv.QUOTE_NONNUMERIC)
-
     # ----------------------------------------------------------------------
     # Write a single CSV file
 
