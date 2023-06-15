@@ -1,5 +1,7 @@
 '''
 About  : Generate statistics relating to rule coverage. See main() entry point.
+         This module is not part of the main script. Defaults to using the NHM
+         species list but can use other formats by editing the SPEC_COL values.
 Author : Kevin Morley
 Version: 1 (14-Jun-2023)
 '''
@@ -20,17 +22,24 @@ logging.basicConfig(level=logging.INFO,
             format='[%(module)s]-[%(funcName)s]-[%(levelname)s] - %(message)s', 
             encoding = 'utf-8',
             handlers= [
-                logging.FileHandler('stats.log', mode='w'), 
+                logging.FileHandler('./logs/stats.log', mode='w'), 
                 logging.StreamHandler()
             ])
 log = logging.getLogger(__name__)
 
 # --------------------------------------------------------------------------
 # Default file names for input/output
-
-DEFAULT_FN_OUTPUT = '../Results/stats.csv'
-DEFAULT_FN_SPECIES = '../Results/species_nhm.csv'
-DEFAULT_FN_RULES = '../Results/all_rules.csv'
+DEFAULT_FN_OUTPUT = '../Results/stats.csv'          # output file
+DEFAULT_FN_SPECIES = '../Results/species_nhm.csv'   # input species file
+DEFAULT_FN_RULES = '../Results/all_rules.csv'       # input rules file
+# Column indices for species file
+SPEC_COL_TVK = 2            # taxon key
+SPEC_COL_RANK = 7           # rank
+SPEC_COL_TVK_PREF = 16      # preferred taxon key
+# Column indices for all_rules file
+RUL_COL_TVK = 0             # taxon key
+RUL_COL_RULESET = 2         # ruleset
+ROL_COL_ORG = 3             # org
 
 # ------------------------------------------------------------------------------
 # Classes
@@ -108,18 +117,18 @@ class RuleStats:
             'seasonal': 0
         }
         # Calculate totals      
-        for taxon in self.rules:
-            for rule in self.rules[taxon]:
+        for taxon_key in self.rules:
+            for rule in self.rules[taxon_key]:
                 n_rules += 1
                 n_types[rule[0]] += 1
             
-            if taxon not in self.species:
-                log.info(f'Orphaned rule for taxon key {taxon}')
+            if taxon_key not in self.species:
+                log.info(f'Orphaned rule for taxon key {taxon_key}')
                 n_orphan_rule += 1
                 continue
             # Calculate no. of rules which apply to preferred taxons
-            spec = self.species[taxon]
-            if spec['taxon_key_preferred'] == taxon:
+            spec = self.species[taxon_key]
+            if spec['taxon_key_preferred'] == taxon_key:
                 n_pref += 1
             else:
                 n_nonpref += 1
@@ -175,9 +184,9 @@ class RuleStats:
             reader = csv.reader(file)
             next(reader)
             for row in reader:
-                taxon_key = row[0].upper()
-                ruleset = row[2]
-                org = row[3]
+                taxon_key = row[RUL_COL_TVK].upper()
+                ruleset = row[RUL_COL_RULESET]
+                org = row[ROL_COL_ORG]
                 self.rules.setdefault(taxon_key, []).append([ruleset, org])
 
         log.info(f'Reading species file: {self.fn_species}')
@@ -185,9 +194,9 @@ class RuleStats:
             reader = csv.reader(file)
             next(reader)
             for row in reader:
-                taxon_key = row[2].upper()
-                rank = row[7]
-                taxon_key_preferred = row[16].upper()
+                taxon_key = row[SPEC_COL_TVK].upper()
+                rank = row[SPEC_COL_RANK]
+                taxon_key_preferred = row[SPEC_COL_TVK_PREF].upper()
                 self.species[taxon_key] = {
                     'taxon_key_preferred': taxon_key_preferred,
                     'rank': rank,

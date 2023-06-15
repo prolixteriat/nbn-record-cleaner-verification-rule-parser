@@ -3,9 +3,8 @@
 .vscode
 __pycache__
 lib
+logs
 Old
 
 # Files
 Pipfile.lock
-debug.log
-skip.log

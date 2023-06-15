@@ -2,7 +2,7 @@
 About  : Implements the RuleParser class which performs the data input and
          parsing processes for a single organisation rule set.
 Author : Kevin Morley
-Verion : 1 (24-Mar-2023)
+Verion : 2 (15-Jun-2023)
 '''
 
 # ------------------------------------------------------------------------------
@@ -20,8 +20,7 @@ from utils import get_files, get_folders, MultiOrderedDict      # KPM
 log = logging.getLogger(__name__)
 skip_log = logging.getLogger('skip')
 skip_log.propagate = False
-# skip_log.removeHandler(logging.StreamHandler)
-skip_log.addHandler(logging.FileHandler('skip.log', mode='w'))
+skip_log.addHandler(logging.FileHandler('./logs/skip.log', mode='w'))
 
 # ------------------------------------------------------------------------------
 # Class which orchestrates the data input, parsing and output processes.

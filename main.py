@@ -20,7 +20,7 @@ logging.basicConfig(level=logging.INFO,
             format='[%(module)s]-[%(funcName)s]-[%(levelname)s] - %(message)s', 
             encoding = 'utf-8',
             handlers= [
-                logging.FileHandler('debug.log', mode='w'), 
+                logging.FileHandler('./logs/debug.log', mode='w'), 
                 logging.StreamHandler()
             ])
 log = logging.getLogger(__name__)
