@@ -33,87 +33,77 @@ class RuleOutput:
         '''
         self.folder_output = os.path.abspath(folder_output)
         self.parser = parser
-        self.consol = {}    # single, consolidated ruleset dictionary
+        self.consol = []    # single, consolidated ruleset list
 
     # --------------------------------------------------------------------------
-    # Return the consol rule record corresponding to a given taxon_key.
+    # Create and initialise a new consol rule.
 
-    def get_consol_record(self, taxon_key):
-        # Check whether rule record exists already. If not, create a new one.
-        if taxon_key in self.consol:
-            rv = self.consol[taxon_key]
-        else:
-            rv = {
-                'id': len(self.consol) + 1,
-                'ruleset': '',
-                'organisation': '',
-                'message': '',
-                'information': '',
-                'difficulty_key': '',
-                'start_date': '',
-                'end_date': '',
-                'stage': '',
-                '10km_GB': '',
-                '10km_Ireland': '',
-                '10km_CI': ''
-            }
-            self.consol[taxon_key] = rv
-        
-        return rv
+    def create_consol_record(self, taxon_key, ruleset, rule):
+        '''
+        Params: taxon_key (string) - 
+                ruleset (string) -
+                rule (dict) -
+        Return: (dict)
+        '''        
+        record = {
+            'id': len(self.consol) + 1,
+            'taxon_key': taxon_key.upper(),
+            'ruleset': ruleset,
+            'organisation': rule['organisation'],
+            'message': rule['message'],
+            'information': '',
+            'difficulty_key': '',
+            'start_date': '',
+            'end_date': '',
+            'stage': '',
+            '10km_GB': '',
+            '10km_Ireland': '',
+            '10km_CI': ''
+        }
+        self.consol.append(record)
+
+        return record
 
     # --------------------------------------------------------------------------
     # Populate the consol dict.
 
     def populate_consol(self):
-        # -----------------------------------------------
-        def populate_common(record, ruleset, rule):
-            record['ruleset'] = ruleset
-            record['organisation'] = rule['organisation']
-            record['message'] = rule['message']
-        # -----------------------------------------------            
         log.info('Creating consolidated ruleset...')
         self.consol.clear()
         # additionals
         for rule in self.parser.additionals:
-            record = self.get_consol_record(rule['taxon_key'])
-            populate_common(record, 'additional', rule)
+            record = self.create_consol_record(rule['taxon_key'], 'additional', rule)
             record['information'] = rule['information']
         # difficulties
         for rule in self.parser.difficulties:
-            record = self.get_consol_record(rule['taxon_key'])
-            populate_common(record, 'difficulty', rule)
+            record = self.create_consol_record(rule['taxon_key'], 'difficulty', rule)
             record['difficulty_key'] = rule['difficulty_key']
         # flightperiods
         for rule in self.parser.flights:
-            record = self.get_consol_record(rule['taxon_key'])
-            populate_common(record, 'flightperiod', rule)
+            record = self.create_consol_record(rule['taxon_key'], 'flightperiod', rule)
             record['start_date'] = rule['start_date']            
             record['end_date'] = rule['end_date']            
             record['stage'] = rule['stage']            
         # periods
         for rule in self.parser.periods:
-            record = self.get_consol_record(rule['taxon_key'])
-            populate_common(record, 'period', rule)
+            record = self.create_consol_record(rule['taxon_key'], 'period', rule)
             record['start_date'] = rule['start_date']            
             record['end_date'] = rule['end_date']            
         # ranges
         for rule in self.parser.ranges:
-            record = self.get_consol_record(rule['taxon_key'])
-            populate_common(record, 'range', rule)
+            record = self.create_consol_record(rule['taxon_key'], 'range', rule)
             record['10km_GB'] = rule['10km_GB']            
             record['10km_Ireland'] = rule['10km_Ireland']            
             record['10km_CI'] = rule['10km_CI'] 
         # regions
         for rule in self.parser.regions:
-            record = self.get_consol_record(rule['taxon_key'])
-            populate_common(record, 'region', rule)
+            record = self.create_consol_record(rule['taxon_key'], 'region', rule)
             record['10km_GB'] = rule['10km_GB']            
             record['10km_Ireland'] = rule['10km_Ireland']            
             record['10km_CI'] = rule['10km_CI'] 
         # seasonals
         for rule in self.parser.seasonals:
-            record = self.get_consol_record(rule['taxon_key'])
-            populate_common(record, 'seasonal', rule)
+            record = self.create_consol_record(rule['taxon_key'], 'seasonal', rule)
             record['start_date'] = rule['start_date']            
             record['end_date'] = rule['end_date']            
             record['stage'] = rule['stage']                                                 
@@ -158,8 +148,11 @@ class RuleOutput:
             ['taxon_key', 'preferred_tvk', 'name', 'authority', 'group', 
              'name_type', 'well_formed', 'msg_id'])
 
-        self.write_consol('all_rules.csv')
-
+        self.write_file('all_rules.csv', self.consol,
+            ['id', 'taxon_key', 'ruleset', 'organisation', 'message', 
+             'information', 'difficulty_key', 'start_date', 'end_date', 
+             'stage', '10km_GB', '10km_Ireland', '10km_CI'])
+        
     # ----------------------------------------------------------------------
     # Write the consol dict to  CSV file
 

@@ -37,7 +37,7 @@ SPEC_COL_TVK = 2            # taxon key
 SPEC_COL_RANK = 7           # rank
 SPEC_COL_TVK_PREF = 16      # preferred taxon key
 # Column indices for all_rules file
-RUL_COL_TVK = 0             # taxon key
+RUL_COL_TVK = 1             # taxon key
 RUL_COL_RULESET = 2         # ruleset
 ROL_COL_ORG = 3             # org
 
@@ -135,10 +135,10 @@ class RuleStats:
         
         # Output summary stats
         log.info('-'*50)
-        log.info(f'Total number of species               : {len(self.species):,}')
-        log.info(f'Total number of rules                 : {n_rules:,}')
-        log.info(f'No. of species with rules             : {len(self.rules):,}')
-        log.info(f'No. of orphaned rules                 : {n_orphan_rule:,}')
+        log.info(f'No. of taxons in species file         : {len(self.species):,}')
+        log.info(f'No. of rules                          : {n_rules:,}')
+        log.info(f'No. of taxons with rules              : {len(self.rules):,}')
+        log.info(f'No. of orphaned rules without taxons  : {n_orphan_rule:,}')
         log.info(f'No. of preferred taxons with rules    : {n_nonpref:,}')
         log.info(f'No. of non-preferred taxons with rules: {n_pref:,}')
         log.info(f'No. of [additional] rules             : {n_types["additional"]:,}')
