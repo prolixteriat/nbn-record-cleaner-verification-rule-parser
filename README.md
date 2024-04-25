@@ -39,7 +39,3 @@ The script consists of the following files:
 - **RuleParser.py** - Implements the RuleParser class which performs the data input and parsing processes for a single organisation rule set.
 - **RuleOutput.py** - Implements the RuleOutput class which performs the writing of results to CSV files.
 - **utils.py** - Utility functions.
-
----
-
-v1 (01-Jun-2023)
