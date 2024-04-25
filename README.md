@@ -1,4 +1,4 @@
-# NBN-Record-Cleaner-Verification-Rule-Parser
+# nbn-record-cleaner-verification-rule-parser
 
 ## Overview
 This Python script uses the set of data verification rules published by the **National Biodiversity Network** (NBN) as part of its [NBN Record Cleaner](https://nbn.org.uk/tools-and-resources/nbn-toolbox/nbn-record-cleaner/) software. The NBN Record Cleaner verification rules are in the form of INI-type configuation files with one file per rule. The script traverses the verification rule folder structure, parsing and consolidating the rules into rule types. One CSV file is produced for each rule type. In addition, the species list included with NBN Record Cleaner is parsed and output in CSV format.
