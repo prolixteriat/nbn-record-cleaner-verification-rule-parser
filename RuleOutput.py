@@ -75,35 +75,48 @@ class RuleOutput:
         for rule in self.parser.difficulties:
             record = self.create_consol_record(rule['taxon_key'], 'difficulty', rule)
             record['difficulty_key'] = rule['difficulty_key']
+            # record['query'] = f'difficulty_key >= {rule["difficulty_key"]}' # RE
         # flightperiods
         for rule in self.parser.flights:
             record = self.create_consol_record(rule['taxon_key'], 'flightperiod', rule)
             record['start_date'] = rule['start_date']            
             record['end_date'] = rule['end_date']            
             record['stage'] = rule['stage']            
+            # record['query'] = f'stage.as_upper == "{{stage.upper()}}" and (start_date > "{rule["start_date"]}" or end_date < "{rule["end_date"]}")' # RE
         # periods
         for rule in self.parser.periods:
             record = self.create_consol_record(rule['taxon_key'], 'period', rule)
             record['start_date'] = rule['start_date']            
-            record['end_date'] = rule['end_date']            
+            record['end_date'] = rule['end_date']
+            # if len(rule['end_date']) > 0:   # RE
+            #     record['query'] = f'{rule["start_date"]} > "{{date}}" or {rule["end_date"]} < "{{date}}"'
+            # else:
+            #      record['query'] = f'{rule["start_date"]} > "{{date}}"'
         # ranges
         for rule in self.parser.ranges:
             record = self.create_consol_record(rule['taxon_key'], 'range', rule)
             record['10km_GB'] = rule['10km_GB']            
             record['10km_Ireland'] = rule['10km_Ireland']            
             record['10km_CI'] = rule['10km_CI'] 
+            # record['query'] = f'{rule["10km_GB"].upper()} =~ ".*{{gridref}}" or {rule["10km_Ireland"].upper()} =~ ".*{{gridref}}" or {rule["10km_CI"].upper()} =~ ".*{{gridref}}"' # RE
         # regions
         for rule in self.parser.regions:
             record = self.create_consol_record(rule['taxon_key'], 'region', rule)
             record['10km_GB'] = rule['10km_GB']            
             record['10km_Ireland'] = rule['10km_Ireland']            
             record['10km_CI'] = rule['10km_CI'] 
+            # record['query'] = f'{rule["10km_GB"].upper()} =~ ".*{{gridref}}" or {rule["10km_Ireland"].upper()} =~ ".*{{gridref}}" or {rule["10km_CI"].upper()} =~ ".*{{gridref}}"' # RE
         # seasonals
         for rule in self.parser.seasonals:
             record = self.create_consol_record(rule['taxon_key'], 'seasonal', rule)
             record['start_date'] = rule['start_date']            
             record['end_date'] = rule['end_date']            
-            record['stage'] = rule['stage']                                                 
+            record['stage'] = rule['stage'] 
+            # if len(rule['stage']) == 0:  # RE
+            #     record['query'] = f'{rule["start_date"]} > "{{date}}" or {rule["end_date"]} < "{{date}}"'
+            # else:
+            #     record['query'] = f'[term for term in $split({rule["stage"].lower()},",") if term == "{{stage.lower()}}"].length > 0) and ({rule["start_date"]} > "{{date}}" or {rule["end_date"]} < "{{date}}")'
+
 
     # --------------------------------------------------------------------------
     # Write results to output channels.
@@ -148,7 +161,8 @@ class RuleOutput:
         self.write_file('all_rules.csv', self.consol,
             ['id', 'taxon_key', 'ruleset', 'organisation', 'message', 
              'information', 'difficulty_key', 'start_date', 'end_date', 
-             'stage', '10km_GB', '10km_Ireland', '10km_CI'])
+             'stage', '10km_GB', '10km_Ireland', '10km_CI', 'query'])
+             # 'stage', '10km_GB', '10km_Ireland', '10km_CI', 'query']) #RE
         
     # ----------------------------------------------------------------------
     # Write a single CSV file
